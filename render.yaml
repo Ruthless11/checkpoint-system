@@ -10,4 +10,4 @@ services:
       - key: SECRET_KEY
         value: 54f7303d1d3ec0b43b9b59bfcb8ad55c80f83f4776bb41f9e92f676f4804b9af
       - key: SQLALCHEMY_DATABASE_URI
-        value: postgresql://postgres:TrapGres1234@localhost/checkpoint_db
+        value: postgresql://checkpoint_db_7zvn_user:J9AwE1VC7K23MiJhsXgRVLk7kx63d4TF@dpg-d1shgb2li9vc73d6c56g-a/checkpoint_db_7zvn

@@ -8,15 +8,17 @@ from routes.auth_routes import auth_bp
 from routes.checkpoint_routes import checkpoint_bp
 from routes.token_routes import token_bp
 from routes.admin_routes import admin_bp
+import os
 
 # ---- Flask App Setup ----
 app = Flask(__name__)
 
 # Configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:TrapGres1234@localhost/checkpoint_db'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = 'your_secret_key'
-app.config['SECRET_KEY'] = 'your_secret_key'
+app.secret_key = os.getenv('SECRET_KEY')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 # ---- Extensions Initialization ----
 db.init_app(app)
