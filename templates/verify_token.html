@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+{% block title %}Verify Token{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-4 text-primary"><i class="bi bi-shield-check"></i> Token Verification</h3>
+
+  <form method="POST" class="row g-3 mb-4">
+    <div class="col-md-5">
+      <input type="text" name="serial" class="form-control" placeholder="Token Serial" required>
+    </div>
+    <div class="col-md-5">
+      <input type="text" name="vehicle_plate" class="form-control" placeholder="Vehicle Number Plate" required>
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100">
+        <i class="bi bi-search"></i> Verify
+      </button>
+    </div>
+  </form>
+
+  {% if status %}
+    {% if status == 'valid' %}
+      <div class="alert alert-success"><strong>✅ Token is valid and marked as used.</strong></div>
+      <ul class="list-group shadow-sm mb-3">
+        <li class="list-group-item"><strong>Serial:</strong> {{ token.serial }}</li>
+        <li class="list-group-item"><strong>Plate:</strong> {{ token.vehicle_plate }}</li>
+        <li class="list-group-item"><strong>Cargo Type:</strong> {{ token.cargo_type.name }}</li>
+        <li class="list-group-item"><strong>Price:</strong> ZMW {{ '%.2f'|format(token.price) }}</li>
+        <li class="list-group-item"><strong>Expires:</strong> {{ token.expiration_date.strftime('%Y-%m-%d') }}</li>
+      </ul>
+    {% elif status == 'used' %}
+      <div class="alert alert-warning">⚠️ This token has already been used.</div>
+    {% elif status == 'expired' %}
+      <div class="alert alert-danger">❌ This token has expired.</div>
+    {% elif status == 'mismatch' %}
+      <div class="alert alert-danger">❌ Number plate does not match the token.</div>
+    {% else %}
+      <div class="alert alert-danger">❌ Invalid token serial number.</div>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

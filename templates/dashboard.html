@@ -1,0 +1,219 @@
+{% extends 'layout.html' %} 
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+<!-- Logo and Header -->
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div class="d-flex align-items-center">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" height="60" class="me-3">
+    <div>
+      <h2 class="fw-bold text-primary mb-0">KMTC Checkpoint Dashboard</h2>
+      <small class="text-muted">Monitor checkpoint activity and revenue in real-time</small>
+    </div>
+  </div>
+  <a class="btn btn-success btn-lg" href="{{ url_for('checkpoint.report_download', **filters) }}">
+    <i class="bi bi-file-earmark-bar-graph"></i> Generate Report
+  </a>
+</div>
+
+{% if current_user.role == 'admin' %}
+<div class="mb-4">
+  <a href="{{ url_for('token.manage_cargo') }}" class="btn btn-outline-primary">
+    <i class="bi bi-box-seam"></i> Manage Cargo Types
+  </a>
+</div>
+{% endif %}
+
+<!-- Filter Form -->
+<div class="card shadow-sm mb-4">
+  <div class="card-body bg-light">
+    <form method="GET" class="row g-3 align-items-end">
+
+      <div class="col-md-3">
+        <label class="form-label">Company</label>
+        <select name="company_id" class="form-select">
+          <option value="">All Companies</option>
+          {% for id, name in companies %}
+            <option value="{{ id }}" {% if filters.company_id == id %}selected{% endif %}>{{ name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Checkpoint</label>
+        <select name="checkpoint" class="form-select">
+          <option value="">All Checkpoints</option>
+          {% for cp in checkpoints %}
+            <option value="{{ cp }}" {% if filters.checkpoint == cp %}selected{% endif %}>{{ cp }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">Month</label>
+        <select name="month" class="form-select">
+          <option value="">All Months</option>
+          {% for i, name in [(1,'January'),(2,'February'),(3,'March'),(4,'April'),(5,'May'),(6,'June'),
+                             (7,'July'),(8,'August'),(9,'September'),(10,'October'),(11,'November'),(12,'December')] %}
+            <option value="{{ i }}" {% if filters.month == i %}selected{% endif %}>{{ name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">Year</label>
+        <select name="year" class="form-select">
+          <option value="">All Years</option>
+          {% for y in years %}
+            <option value="{{ y|int }}" {% if filters.year == y|int %}selected{% endif %}>{{ y|int }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">Day of Week</label>
+        <select name="day" class="form-select">
+          <option value="">All Days</option>
+          {% for d in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
+            <option value="{{ d }}" {% if filters.day == d %}selected{% endif %}>{{ d }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">Specific Date</label>
+        <input type="date" name="date" class="form-control" value="{{ filters.date }}">
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">Week Number</label>
+        <input type="number" name="week" class="form-control" min="1" max="53" value="{{ filters.week }}">
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">Hour</label>
+        <select name="hour" class="form-select">
+          <option value="">All Hours</option>
+          {% for h in range(0, 24) %}
+            <option value="{{ h }}" {% if filters.hour == h %}selected{% endif %}>{{ "%02d:00"|format(h) }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100" type="submit">
+          <i class="bi bi-funnel-fill"></i> Filter
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+  <div class="col-md-6">
+    <div class="card shadow-sm bg-white border-0 text-dark">
+      <div class="card-body">
+        <h6 class="text-muted">Total Vehicles</h6>
+        <h2 class="fw-bold"><i class="bi bi-truck"></i> {{ total_vehicles }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card shadow-sm bg-white border-0 text-dark">
+      <div class="card-body">
+        <h6 class="text-muted">Total Revenue</h6>
+        <h2 class="fw-bold"><i class="bi bi-cash-coin"></i> ZMW {{ '%.2f'|format(total_amount) }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Logged-in Officers -->
+{% if active_officers %}
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-info text-white fw-semibold">
+    Currently Logged-in Officers (Last 15 Minutes)
+  </div>
+  <div class="card-body">
+    <ul class="list-group list-group-flush">
+      {% for officer in active_officers %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ officer.officer_profile.full_name or officer.phone }}
+        <span class="badge bg-success">Active</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% else %}
+<div class="alert alert-secondary">
+  No officers are currently logged in.
+</div>
+{% endif %}
+
+<!-- Revenue Charts -->
+{% if company_chart or checkpoint_chart %}
+<div class="row mb-4">
+  {% if company_chart %}
+  <div class="col-md-6">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-primary text-white fw-semibold">
+        Revenue Share by Company
+      </div>
+      <div class="card-body text-center">
+        <img src="data:image/png;base64,{{ company_chart|safe }}" class="img-fluid rounded shadow-sm" alt="Company Chart">
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if checkpoint_chart %}
+  <div class="col-md-6">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-secondary text-white fw-semibold">
+        Revenue by Checkpoint
+      </div>
+      <div class="card-body text-center">
+        <img src="data:image/png;base64,{{ checkpoint_chart|safe }}" class="img-fluid rounded shadow-sm" alt="Checkpoint Chart">
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+
+<!-- Records Table -->
+<div class="card shadow-sm border-0">
+  <div class="card-header bg-dark text-white fw-semibold">
+    Vehicle Passage Records
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-striped table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Plate</th>
+            <th>Company</th>
+            <th>Checkpoint</th>
+            <th>Amount</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for l in logs %}
+          <tr>
+            <td>{{ l.number_plate }}</td>
+            <td>{{ l.company.company_profile.company_name if l.company and l.company.company_profile else 'Unknown' }}</td>
+            <td>{{ l.checkpoint }}</td>
+            <td>ZMW {{ '%.2f'|format(l.amount_paid) }}</td>
+            <td>{{ l.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

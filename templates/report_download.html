@@ -1,0 +1,71 @@
+{% extends 'layout.html' %}
+{% block title %}Download Report{% endblock %}
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div class="d-flex align-items-center">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" height="60" class="me-3 rounded shadow-sm">
+    <div>
+      <h3 class="fw-bold text-primary mb-0"><i class="bi bi-download"></i> Download / Email Report</h3>
+      <small class="text-muted">Export checkpoint data with filters, branding, totals, and optional charts</small>
+    </div>
+  </div>
+</div>
+
+{% if user.role == 'admin' %}
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body bg-light">
+      <form method="GET" action="{{ url_for('checkpoint.generate_report') }}" class="row g-3 align-items-end">
+
+        <!-- Hidden Filter Inputs -->
+        <input type="hidden" name="company_id" value="{{ request.args.get('company_id', '') }}">
+        <input type="hidden" name="checkpoint" value="{{ request.args.get('checkpoint', '') }}">
+        <input type="hidden" name="month" value="{{ request.args.get('month', '') }}">
+        <input type="hidden" name="year" value="{{ request.args.get('year', '') }}">
+        <input type="hidden" name="week" value="{{ request.args.get('week', '') }}">
+        <input type="hidden" name="day" value="{{ request.args.get('day', '') }}">
+        <input type="hidden" name="date" value="{{ request.args.get('date', '') }}">
+        <input type="hidden" name="hour" value="{{ request.args.get('hour', '') }}">
+
+        <!-- Email Field -->
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Send to Email (optional)</label>
+          <input type="email" name="email" placeholder="example@domain.com" class="form-control">
+        </div>
+
+        <!-- Format Selection -->
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Export Format</label>
+          <select name="format" class="form-select">
+            <option value="pdf">📄 PDF (with optional chart)</option>
+            <option value="excel">📊 Excel (with totals)</option>
+          </select>
+        </div>
+
+        <!-- Include Chart Option -->
+        <div class="col-md-2">
+          <label class="form-label fw-semibold">Include Chart</label>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="include_chart" value="1" id="includeChart" checked>
+            <label class="form-check-label" for="includeChart">Yes</label>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="col-md-3">
+          <button class="btn btn-success w-100" type="submit">
+            <i class="bi bi-download"></i> Generate Report
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="alert alert-info shadow-sm">
+    <strong>Note:</strong> PDF reports include logo, chart (optional), totals, and timestamp. Excel reports are ideal for analysis.
+  </div>
+{% else %}
+  <div class="alert alert-warning">Only admins can download or email reports.</div>
+{% endif %}
+
+{% endblock %}

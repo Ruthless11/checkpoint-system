@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+
+      <div class="text-center mb-4">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" height="60" class="mb-3">
+        <h3 class="fw-bold text-primary">KMTC Vehicle Checkpoint System</h3>
+        <p class="text-muted">Login to access your dashboard</p>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" class="card p-4 shadow-sm bg-light">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+          {{ form.phone.label(class="form-label") }}
+          {{ form.phone(class="form-control", placeholder="Enter your phone number") }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.password.label(class="form-label") }}
+          {{ form.password(class="form-control", placeholder="Enter your password") }}
+        </div>
+
+        {{ form.submit(class="btn btn-primary w-100") }}
+      </form>
+
+      <div class="text-center mt-3">
+        <a href="{{ url_for('auth.register') }}">Don't have an account? Register</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 15px;
+  background: #f0f2f5;
+}
+
+.card-header {
+  font-weight: bold;
+}
+
+label.form-label {
+  font-weight: 500;
+}

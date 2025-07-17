@@ -1,0 +1,68 @@
+{% extends 'layout.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0"><i class="bi bi-person-plus"></i> Company Registration</h4>
+        </div>
+        <div class="card-body bg-light">
+          
+          {% for field, errors in form.errors.items() %}
+            {% for error in errors %}
+              <div class="alert alert-danger">{{ error }}</div>
+            {% endfor %}
+          {% endfor %}
+
+          <form method="POST" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+              {{ form.full_name.label(class="form-label") }}
+              {{ form.full_name(class="form-control") }}
+            </div>
+
+            <div class="mb-3">
+              {{ form.phone.label(class="form-label") }}
+              {{ form.phone(class="form-control") }}
+            </div>
+
+            <div class="mb-3">
+              {{ form.email.label(class="form-label") }}
+              {{ form.email(class="form-control") }}
+            </div>
+
+            <div class="mb-3">
+              {{ form.password.label(class="form-label") }}
+              {{ form.password(class="form-control") }}
+            </div>
+
+            <div class="mb-3">
+              {{ form.company_name.label(class="form-label") }}
+              {{ form.company_name(class="form-control") }}
+            </div>
+
+            <div class="mb-3">
+              {{ form.captcha.label(class="form-label") }}
+              {{ form.captcha(class="form-control") }}
+            </div>
+
+            <div class="d-grid">
+              {{ form.submit(class="btn btn-success") }}
+            </div>
+
+            <div class="text-center mt-3">
+              <a href="{{ url_for('auth.login') }}"><i class="bi bi-box-arrow-in-right"></i> Already have an account? Login</a>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

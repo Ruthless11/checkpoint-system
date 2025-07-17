@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+{% block title %}Add New User{% endblock %}
+{% block content %}
+
+<div class="container mt-4">
+  <h3 class="mb-4 text-primary"><i class="bi bi-person-plus"></i> Add Officer or Admin</h3>
+
+  <form method="POST" class="card shadow-sm p-4 bg-light">
+    <div class="mb-3">
+      <label class="form-label">Full Name</label>
+      <input type="text" name="full_name" class="form-control" placeholder="Enter full name" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Phone Number</label>
+      <input type="text" name="phone" class="form-control" placeholder="Enter phone number" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" name="email" class="form-control" placeholder="Enter email" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">National Registration ID (NRC)</label>
+      <input type="text" name="nrc" class="form-control" placeholder="123456/78/1" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+      <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Role</label>
+      <select name="role" class="form-select" required>
+        <option value="">-- Select Role --</option>
+        <option value="officer">Officer</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-success w-100"><i class="bi bi-person-plus-fill"></i> Create User</button>
+  </form>
+</div>
+
+{% endblock %}

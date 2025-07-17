@@ -1,0 +1,68 @@
+{% extends 'layout.html' %}
+{% block title %}Company Dashboard{% endblock %}
+{% block content %}
+
+<h2 class="text-primary mb-4">Welcome, {{ user.company_name }}</h2>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="card text-white bg-primary shadow-sm">
+      <div class="card-body">
+        <h6>Total Tokens</h6>
+        <h2><i class="bi bi-ticket-detailed"></i> {{ total_tokens }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-white bg-success shadow-sm">
+      <div class="card-body">
+        <h6>Total Spent</h6>
+        <h2><i class="bi bi-cash-coin"></i> ZMW {{ '%.2f' | format(total_spent) }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Tokens Table -->
+<h4 class="mb-3">Recent Tokens</h4>
+<div class="card shadow-sm border-0">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-striped table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Serial</th>
+            <th>Plate</th>
+            <th>Cargo</th>
+            <th>Price</th>
+            <th>Expires</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for token in recent_tokens %}
+          <tr>
+            <td>{{ token.serial }}</td>
+            <td>{{ token.vehicle_plate }}</td>
+            <td>{{ token.cargo_type.name }}</td>
+            <td>ZMW {{ '%.2f' | format(token.price) }}</td>
+            <td>{{ token.expiration_date.strftime('%Y-%m-%d') }}</td>
+            <td>
+              {% if token.status == 'used' %}
+                <span class="badge bg-secondary">Used</span>
+              {% elif token.expiration_date < current_time %}
+                <span class="badge bg-danger">Expired</span>
+              {% else %}
+                <span class="badge bg-success">Active</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

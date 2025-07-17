@@ -1,0 +1,36 @@
+# Bytecode and cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment folders
+venv/
+.venv/
+env/
+ENV/
+
+# Environment variables file
+.env
+
+# Flask logs and database
+*.log
+*.sqlite3
+instance/
+
+# IDE or editor folders/files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Test and coverage reports
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter notebook checkpoints (if used)
+.ipynb_checkpoints/
